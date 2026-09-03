@@ -1,4 +1,6 @@
-﻿namespace ChessBoard_SUT26_Leon_Geertinger_Johansson
+﻿using System.Drawing;
+
+namespace ChessBoard_SUT26_Leon_Geertinger_Johansson
 {
     internal class Program
     {
@@ -6,7 +8,6 @@
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            Board board = new Board();
 
             int size = 0;
             while (size == 0)
@@ -26,10 +27,15 @@
                     Console.WriteLine("Var god skriv ett tal mellan 1 - 100.");
                 }
             }
+            Console.WriteLine("Har ska svarta rutor se ut? ");
+            char blackSquare = char.Parse(Console.ReadLine());
 
-            char[] boardObject = board.getBoard(size);
+            Console.WriteLine("Hur ska vita rutor se ut? ");
+            char whiteSquare = char.Parse(Console.ReadLine());
 
-            board.printBoard(boardObject, size);
+            Board board = new Board(size, blackSquare, whiteSquare);
+            
+            board.printBoard();
 
 
         }
@@ -37,11 +43,20 @@
     }
     public class Board
     {
-        public Board() { }
-        public char[] getBoard(int size = 10)
+        private int size { get; set; } = 10;
+        public char[] board {  get; set; }
+        public char whiteSquare { get; set; }
+        public char blackSquare { get; set; }
+        public Board(int size, char blackSquare = '□', char whiteSquare = '■') {
+            this.size = size;
+            this.blackSquare = blackSquare;
+            this.whiteSquare = whiteSquare;
+            this.board = getBoard(size);
+        }
+        public char[] getBoard(int size)
         {
             char[] board = new char[size * size];
-            char[] square = ['■', '□'];
+            char[] square = [this.whiteSquare, this.blackSquare];
 
             for (int i = 0; i < board.Length; i++)
             {
@@ -58,14 +73,14 @@
             }
             return board;
         }
-
-        public void printBoard(char[] board, int size)
+        
+        public void printBoard()
         {
-            for (int i = 0; i < board.Length; i++)
+            for (int i = 0; i < this.board.Length; i++)
             {
-                Console.Write(board[i]);
+                Console.Write(this.board[i]);
                 //Creates a new row after printing enough squares to accomodate for the size of the board.
-                if ((i + 1) % size == 0)
+                if ((i + 1) % this.size == 0)
                 {
                     Console.WriteLine();
                 }

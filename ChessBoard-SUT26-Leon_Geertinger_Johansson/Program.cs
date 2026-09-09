@@ -15,7 +15,9 @@ namespace ChessBoard_SUT26_Leon_Geertinger_Johansson
                 try
                 {
                     Console.WriteLine("Hur stort bräde vill du ha?");
-                    size = byte.Parse(Console.ReadLine());
+                    //Throws an exception if parse fails or size is not within 1-100
+                    size = int.Parse(Console.ReadLine());
+                
                     if (size < 1 || size > 100)
                     {
                         throw new Exception();
@@ -27,15 +29,70 @@ namespace ChessBoard_SUT26_Leon_Geertinger_Johansson
                     Console.WriteLine("Var god skriv ett tal mellan 1 - 100.");
                 }
             }
-            Console.WriteLine("Har ska svarta rutor se ut? ");
-            char blackSquare = char.Parse(Console.ReadLine());
+            char blackSquare;
+            while (true)
+            {
+                Console.WriteLine("Har ska svarta rutor se ut? (En bokstav eller karaktär)");
+                //Use tryparse since we only care if user input is a 'char'
+                if (char.TryParse(Console.ReadLine(), out blackSquare))
+                {
+                    break;
+                }
+                Console.WriteLine("Vänligen ange exakt en bokstav eller karaktär.");
+            }
 
-            Console.WriteLine("Hur ska vita rutor se ut? ");
-            char whiteSquare = char.Parse(Console.ReadLine());
+            char whiteSquare;
+            while (true)
+            {
+                Console.WriteLine("Hur ska vita rutor se ut? (En bokstav eller karaktär)");
+                if (char.TryParse(Console.ReadLine(), out whiteSquare))
+                {
+                    break;
+                }
+                Console.WriteLine("Vänligen ange exakt en bokstav eller karaktär.");
+            }
 
             Board board = new Board(size, blackSquare, whiteSquare);
             
-            board.printBoard();
+
+            Console.WriteLine("Vart vill du placera en pjäs? (t.ex '2 3')");
+            
+            while (true)
+            {
+                try
+                {
+                
+                    string[] stringCoordinates = Console.ReadLine().Split();
+                    if (stringCoordinates.Length != 2)
+                    {
+                        throw new Exception();
+                    }
+                    
+                    int x = int.Parse(stringCoordinates[0]);
+                    int y = int.Parse(stringCoordinates[1]);
+
+                    //Checks if coordinates is within board size
+                    if (x < 0 || y < 0 || x > board.size || y > board.size)
+                    {
+                        throw new Exception();
+                    }
+
+                    int[] coordinates = { x, y };
+
+                    board.placePiece(coordinates);
+                   
+                    board.printBoard();
+
+                    break;
+                }
+                catch
+                {
+                    Console.WriteLine("Vänligen ange 2 giltiga nummer separerade med ett mellanslag.");
+                    Console.WriteLine($"Nummer bör vara mellan 0 - {board.size - 1}");
+                }
+            }
+            
+            
 
 
         }
@@ -43,14 +100,16 @@ namespace ChessBoard_SUT26_Leon_Geertinger_Johansson
     }
     public class Board
     {
-        private int size { get; set; } = 10;
+        public int size { get; private set; } = 10;
         public char[] board {  get; set; }
-        public char whiteSquare { get; set; }
-        public char blackSquare { get; set; }
-        public Board(int size, char blackSquare = '□', char whiteSquare = '■') {
+        public char whiteSquare { get; set; } /*= '■';*/
+        public char blackSquare { get; set; } /*= '□';*/
+        public Board(int size, char blackSquare, char whiteSquare) {
             this.size = size;
+
             this.blackSquare = blackSquare;
             this.whiteSquare = whiteSquare;
+
             this.board = getBoard(size);
         }
         public char[] getBoard(int size)
@@ -85,6 +144,13 @@ namespace ChessBoard_SUT26_Leon_Geertinger_Johansson
                     Console.WriteLine();
                 }
             }
+        }
+        
+        public void placePiece(int[] coordinates)
+        {
+            //Calculates index as if board was a 2D array.
+            int index = coordinates[0] + (coordinates[1] * this.size);
+            board[index] = 'X';
         }
     }
 }

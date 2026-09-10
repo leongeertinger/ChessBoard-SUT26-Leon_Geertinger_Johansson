@@ -72,7 +72,7 @@ namespace ChessBoard_SUT26_Leon_Geertinger_Johansson
                     int y = int.Parse(stringCoordinates[1]);
 
                     //Checks if coordinates is within board size
-                    if (x < 0 || y < 0 || x > board.size || y > board.size)
+                    if (x < 0 || y < 0 || x >= board.size || y >= board.size)
                     {
                         throw new Exception();
                     }
@@ -101,7 +101,7 @@ namespace ChessBoard_SUT26_Leon_Geertinger_Johansson
     public class Board
     {
         public int size { get; private set; } = 10;
-        public char[] board {  get; set; }
+        public char[] board {  get; private set; }
         public char whiteSquare { get; set; } /*= '■';*/
         public char blackSquare { get; set; } /*= '□';*/
         public Board(int size, char blackSquare, char whiteSquare) {
@@ -121,7 +121,7 @@ namespace ChessBoard_SUT26_Leon_Geertinger_Johansson
             {
                 if (size % 2 == 0)
                 {
-                    //If the size is uneven we reverse the order of squares every new row so it lines up correctly.
+                    //If the size is even we reverse the order of squares every new row so it lines up correctly.
                     if (i != 0 && i % size == 0)
                     {
                         square = square.Reverse().ToArray();
@@ -150,7 +150,7 @@ namespace ChessBoard_SUT26_Leon_Geertinger_Johansson
         {
             //Calculates index as if board was a 2D array.
             int index = coordinates[0] + (coordinates[1] * this.size);
-            board[index] = 'X';
+            board[index] = '♙';
         }
     }
 }
